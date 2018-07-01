@@ -45,6 +45,8 @@ class Sign
             $data['status'] = false;
             $data['message']="无此任务";
         } else{
+            //$place = json_decode($res['address']); //数据库中的 还有就是任务没了，sql语句都要改，新的表长啥样
+            //$address = json_decode($data['address']); //传过来的
             if($res['address']==$data['address']){ //这里验证可能有问题
                 $data['status'] = true;
                 $data['message']="地点正确";
