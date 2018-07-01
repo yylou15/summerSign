@@ -20,34 +20,35 @@ class Sign
      * @param $longitude
      * @param $latitude
      */
-    public function sign($timeLong,$taskID,$openId,$longitude,$latitude){
+    public function sign(Request $request){
+        //$data=$request->post();
+        $data['taskID']=$request->post('taskID');
+        $data['openId']=$request->post('openId');
         $sign = new SignModel();
-        $data=[];
-        $data=$sign->checkTime($data,$taskID);
-        if($data['message']!="time success")
+        $data=$sign->checkTime($data);
+        if($data['status']==false)
             return $data["message"];
-        $data=$sign->checkPlace($data,$taskID,$longitude,$latitude);
-        if($data['message']!="place success")
+        $data=$sign->checkPlace($data);
+        if($data['message']==false)
             return $data["message"];
-        $res = $sign->submit($openId,$taskID,$data);
-        if($res)
-            return "sign success";
-        else
-            return 'something wrong';
+        $res = $sign->submit($data);
+        return $res['message'];
     }
 
-    public function getSign($taskID,$openId,$startDate,$endDate,$type,$detail){
+    public function getSign(Request $request){
+        //$taskID,$openId,$startDate,$endDate,$type,$detail
+        $data=$request->post();
         $sign = new SignModel();
-        switch ($type){
-            case "daily": return $sign->getDaily(); break; //
-            case "all": return $sign->getAll();break;
+        switch ($data['type']){
+            case "daily": return $sign->getDaily($data); break; //
+            case "all": return $sign->getAll($data);break;
             case "individual":
-                switch($detail){
-                    case "simple": return $sign->getSimple();break;
-                    case"late":return $sign->getLate();break;
-                    case "leave":return $sign->getLeave();break;
-                    case"ontime":return $sign->getOntime();break;
-                    case"absent":return $sign->getAbsent();break;
+                switch($data['detail']){
+                    case "simple": return $sign->getSimple($data);break;
+                    case"late":return $sign->getLate($data);break;
+                    case "leave":return $sign->getLeave($data);break;
+                    case"ontime":return $sign->getOntime($data);break;
+                    case"absent":return $sign->getAbsent($data);break;
                 }
         }
     }
