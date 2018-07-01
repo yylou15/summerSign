@@ -12,10 +12,10 @@ use think\Db;
 class Sign
 {
     public function checkTime($data){
-        $res = Db::table('zt_shsj_teamtask')->where(['taskid'=>$data['taskID']])->select("taskid,starttime,endtime")[0];
+        $res = Db::table('zt_shsj_team')->where(['teamid'=>$data['teamID']])->select("teamid,starttime,endtime")[0];
         if($res==null){
             $data['status']=false;
-            $data['message']="无此任务";
+            $data['message']="无此小队";
         }
         else{
             $now=time();
@@ -27,11 +27,11 @@ class Sign
             }
             elseif ($now<$end){
                 $data['time']=date("Y-m-d H:i:s");
-                $data["state"]="ontime";
+                $data["state"]="准点";
                 $data['status']=true;
                 $data['message']= "打卡准点";
             } else{
-                $data['state'] = "late";//这里超出十点端还能打卡，但是要不要只能当天打卡呢？
+                $data['state'] = "迟到";//这里超出十点端还能打卡，但是要不要只能当天打卡呢？
                 $data['status'] = true;
                 $data['message']= "打卡迟到";
             }
@@ -40,14 +40,13 @@ class Sign
     }
 
     public function checkPlace($data){
-        $res = Db::table('zt_shsj_teamtask')->where(['taskid'=>$data['taskID']])->select("taskid,address")[0];
+        $res = Db::table('zt_shsj_team')->where(['teamid'=>$data['teamID']])->select("teamid,place")[0];
         if($res==null) {
             $data['status'] = false;
-            $data['message']="无此任务";
+            $data['message']="无此小队";
         } else{
-            //$place = json_decode($res['address']); //数据库中的 还有就是任务没了，sql语句都要改，新的表长啥样
-            //$address = json_decode($data['address']); //传过来的
-            if($res['address']==$data['address']){ //这里验证可能有问题
+            $place = json_decode($res['address']);
+            if($data['address']==$place[0] or $data['address']==$place[1] or $data['address']==$place[2]){ //这里验证可能有问题
                 $data['status'] = true;
                 $data['message']="地点正确";
             }else{

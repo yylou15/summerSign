@@ -13,17 +13,11 @@ use app\index\model\Team as TeamModel;
 use app\index\model\Sign as SignModel;
 class Sign
 {
-    /**
-     * @param $timeLong 直接用服务器的时间戳不就好
-     * @param $taskID
-     * @param $openId
-     * @param $longitude
-     * @param $latitude
-     */
     public function sign(Request $request){
         //$data=$request->post();
         $data['taskID']=$request->post('taskID');
         $data['openId']=$request->post('openId');
+        //data里必须要有新的参数：teamid
         $sign = new SignModel();
         $data=$sign->checkTime($data);
         if($data['status']==false)
@@ -35,7 +29,7 @@ class Sign
         return $res['message'];
     }
 
-    public function getSign(Request $request){
+    /*public function getSign(Request $request){
         //$taskID,$openId,$startDate,$endDate,$type,$detail
         $data=$request->post();
         $sign = new SignModel();
@@ -51,5 +45,5 @@ class Sign
                     case"absent":return $sign->getAbsent($data);break;
                 }
         }
-    }
+    }*/
 }
